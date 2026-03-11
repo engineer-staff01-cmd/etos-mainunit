@@ -1,0 +1,26 @@
+@startuml boot
+title アップデートシーケンス
+
+participant linux
+participant schedule
+database server
+
+== バージョン確認 ==
+schedule -> server:最新バージョン名取得
+schedule <- server:最新バージョン名
+
+schedule <- linux:内部バージョン取得
+schedule -> schedule:バージョン比較
+
+== ダウンロード ==
+schedule -> server:最新バージョンダウンロード
+schedule <- server:最新バージョン
+schedule -> schedule:CRC計算
+schedule -> schedule:CRC比較
+
+== 書き込み ==
+schedule <- linux:動作中のFWがA/B面どちらか確認
+schedule -> linux:FW書き込み
+schedule -> linux:A/B面情報書き込み
+
+@enduml

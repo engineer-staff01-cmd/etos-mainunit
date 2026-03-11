@@ -1,0 +1,58 @@
+@startuml boot
+!pragma teoz true
+title 起動シーケンス
+
+participant linux
+participant schedule
+participant cloud
+participant child
+participant aram
+participant demand
+database    内部SQL
+database    クラウド
+
+== 電源ON ==
+
+activate linux
+loop
+    linux -> linux:NTP時刻設定
+end
+linux -> linux:FW展開(A/B面判定)
+note right linux:圧縮ファイルをsystemdでRAM展開して実行する想定
+
+linux --> schedule:プログラム起動
+activate schedule
+schedule --> cloud:スレッド起動
+activate cloud
+loop
+    cloud -> クラウド:post ユニークID通知(HW ID)
+    cloud x<- クラウド:応答があるまで繰り返し通知
+    ...
+    cloud -> クラウド:post ユニークID通知(HW ID)
+    cloud <- クラウド:正常応答
+    |||
+    cloud -> クラウド:設定取得（API名を記載する予定）
+    cloud <- クラウド:設定情報
+    |||
+    note right cloud:取得する設定値分やりとりを記載する予定
+    note across:通信がすべて成功するまで繰り返す
+end
+
+cloud <- 内部SQL:設定値取得
+cloud -> cloud:設定値CRC計算・比較
+cloud -> 内部SQL:設定値比較して差分があれば書き込み
+
+
+
+== クラウドから設定情報を取得できたら以下を実行 ==
+
+note right schedule:SQLのテーブルなどが更新された場合はここで補完処理
+
+schedule --> child:子機通信スレッド起動
+activate child
+schedule --> aram:監視・アラートスレッド起動
+activate aram
+schedule --> demand:demand逼迫判断・制御スレッド起動
+activate demand
+
+@enduml

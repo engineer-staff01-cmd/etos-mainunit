@@ -1,0 +1,73 @@
+@startuml boot
+!pragma teoz true
+title クラウドからの制御シーケンス
+
+participant linux
+participant schedule
+participant cloud
+participant child
+participant aram
+participant demand
+database    内部SQL
+database    クラウド
+
+== デマンド制御命令 ==
+
+{start1} schedule -> cloud:デマンド制御命令取得要求
+activate schedule
+cloud -> クラウド:デマンド命令取得
+cloud <- クラウド:デマンド制御命令OFF
+cloud <- 内部SQL:命令取得
+cloud -> 内部SQL:命令書き込み（変化時のみ）
+|||
+|||
+schedule <- 内部SQL:デマンド制御命令取得（非同期のためタイミングは前後する）
+schedule ->x child:出力制御要求
+note right schedule:デマンド制御命令OFFのため通知しない
+
+{end1} schedule -> cloud:デマンド制御命令取得要求
+{start1} <-> {end1}:10秒以内（設定により変更）
+deactivate schedule
+
+cloud -> クラウド:デマンド命令取得
+cloud <- クラウド:デマンド制御命令ON
+cloud <- 内部SQL:命令取得
+cloud -> 内部SQL:命令書き込み（変化時のみ）
+|||
+schedule <- 内部SQL:デマンド制御命令取得（非同期のためタイミングは前後する）
+schedule -> child:出力制御要求
+note right schedule:デマンド制御命令ONのため通知
+
+child -> :出力制御命令
+child <- :出力制御応答
+cloud <- 内部SQL:命令取得
+cloud -> 内部SQL:命令書き込み（変化時のみ）
+
+note across:アラート発報はアラート監視周期毎に行う（最大10秒遅延する）
+
+schedule -> aram:アラート監視要求
+aram <- 内部SQL:出力状態取得
+aram -> aram:アラート監視
+aram -> cloud:出力変化アラート発報要求
+cloud -> クラウド:アラート発報
+
+== 遠隔制御制御命令 ==
+== 遠隔デフロスト命令 ==
+
+
+== 主装置再起動命令 ==
+
+schedule -> cloud:主装置再起動命令取得要求
+
+cloud -> クラウド:主装置再起動命令取得
+cloud <- クラウド:主装置再起動命令ON
+cloud <- 内部SQL:命令取得
+cloud -> 内部SQL:命令書き込み（変化時のみ）
+|||
+schedule <- 内部SQL:主装置再起動命令取得（非同期のためタイミングは前後する）
+
+schedule -> schedule:ログ退避などの処理 <font color=red><b>（要検討）
+
+linux <- schedule:再起動
+
+@enduml

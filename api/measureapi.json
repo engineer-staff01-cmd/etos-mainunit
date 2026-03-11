@@ -1,0 +1,1130 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Measure Data API",
+    "description": "ローカルが計測したデータを受け付けるAPI\n\n# 凡例\n\n各項目のDescriptionは以下の凡例に従う。\n\n- **太字フォント**：要求定義書に紐づく項目がある場合その名前を表記する\n\n# レスポンスの注意事項\n\n各エンドポイントの成功レスポンスは、クラウドでの処理キューへの登録に成功したという意味です。  \n実際のデータ登録処理はその後非同期で実施されるため、成功レスポンスを受けてもデータの登録に失敗する場合があります。\n\n# Authentication\n\n<!-- ReDoc-Inject: <security-definitions> -->",
+    "version": "0.1.8"
+  },
+  "servers": [
+    {
+      "url": "https://a2r5tun0blpx6n-ats.iot.ap-northeast-1.amazonaws.com/topics/dev/frig",
+      "description": "Ghost inc環境の開発用エンドポイント"
+    },
+    {
+      "url": "https://atjgvl5dieils-ats.iot.ap-northeast-1.amazonaws.com/topics/staging/frig",
+      "description": "イートス様環境のステージング用エンドポイント"
+    },
+    {
+      "url": "https://atjgvl5dieils-ats.iot.ap-northeast-1.amazonaws.com/topics/prod/frig",
+      "description": "イートス様環境の本番用エンドポイント"
+    }
+  ],
+  "security": [
+    {
+      "apiKey": [],
+      "apiAuthorizerName": []
+    }
+  ],
+  "paths": {
+    "/demand": {
+      "post": {
+        "summary": "デマンドデータの登録",
+        "description": "デマンドデータの登録をします。",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/demandArgs"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "リクエストの実行結果を返します。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/energy-sensor": {
+      "post": {
+        "summary": "エネルギーセンサーデータの登録",
+        "description": "エネルギーセンサーデータの登録をします。",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/energySensorArgs"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "リクエストの実行結果を返します。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/environmental-sensor": {
+      "post": {
+        "summary": "環境センサーデータの登録",
+        "description": "環境センサーデータの登録をします。",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/environmentalSensorArgs"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "リクエストの実行結果を返します。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/input-contact": {
+      "post": {
+        "summary": "入力接点データの登録",
+        "description": "入力接点データの登録をします。",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/inputContactArgs"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "リクエストの実行結果を返します。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/output-contact": {
+      "post": {
+        "summary": "出力接点データの登録",
+        "description": "出力接点データの登録をします。",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/outputContactArgs"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "リクエストの実行結果を返します。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/equipment-state": {
+      "post": {
+        "summary": "機器別ステートの登録",
+        "description": "機器別ステートの登録をします。",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/equipmentStateArgs"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "リクエストの実行結果を返します。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alert/sensor": {
+      "post": {
+        "summary": "センサー監視アラートの登録",
+        "description": "センサー監視アラートの登録をします。",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/alertSensorArgs"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "リクエストの実行結果を返します。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alert/connection": {
+      "post": {
+        "summary": "通信アラート状況の登録",
+        "description": "通信アラート状況の登録をします。",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/alertConnectionArgs"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "リクエストの実行結果を返します。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alert/battery": {
+      "post": {
+        "summary": "電池残量アラートの登録",
+        "description": "電池残量アラートの登録をします。",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/alertBatteryArgs"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "リクエストの実行結果を返します。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alert/ups": {
+      "post": {
+        "summary": "親機電源アラートの登録",
+        "description": "親機電源アラートの登録をします。",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/alertUpsArgs"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "リクエストの実行結果を返します。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alert/system": {
+      "post": {
+        "summary": "親機システムアラートの登録",
+        "description": "親機システムアラートの登録をします。",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/alertSystemArgs"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "リクエストの実行結果を返します。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/alert/demand": {
+      "post": {
+        "summary": "デマンドアラートの登録",
+        "description": "デマンドアラートの登録をします。  \nローカルで `demandState` が変化した際にアラートを送付します。\n",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/alertDemandArgs"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "リクエストの実行結果を返します。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/postResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "id": {
+        "description": "システムを通して固有のユニークID（UUID v4形式）",
+        "type": "string",
+        "example": "550e8400-e29b-41d4-a716-446655440000"
+      },
+      "baseId": {
+        "description": "**拠点識別**",
+        "type": "string",
+        "example": "550e8400-e29b-41d4-a716-446655440000"
+      },
+      "measuredAt": {
+        "description": "Unix time（epoch time）を示す数値（Second）",
+        "type": "integer",
+        "example": 1630919102
+      },
+      "occurredAt": {
+        "description": "Unix time（epoch time）を示す数値（Second）\n一連のアラートの最初の発生時刻",
+        "type": "integer",
+        "example": 1630919102
+      },
+      "currentElectricity": {
+        "description": "**現在電力(kw)**",
+        "type": "number",
+        "example": 98
+      },
+      "predictedElectricity": {
+        "description": "**予測電力(kw)**",
+        "type": "number",
+        "example": 243
+      },
+      "adjustedElectricity": {
+        "description": "**調整電力(kw)**",
+        "type": "number",
+        "example": -1240
+      },
+      "demandState": {
+        "description": "**アラート状況**  \n`Normal`: 正常  \n`Warn`: 警戒  \n`Limit`: 限界  \n`Excess`: 超過  \n`Recover`: 復帰",
+        "type": "string",
+        "enum": [
+          "Normal",
+          "Warn",
+          "Limit",
+          "Excess",
+          "Recover"
+        ],
+        "example": "Normal"
+      },
+      "remainingSeconds": {
+        "description": "**残り時間（秒）**",
+        "type": "integer",
+        "example": 150
+      },
+      "activeElectricPower": {
+        "description": "**有効電力（W）**",
+        "type": "number",
+        "example": 2531
+      },
+      "activeElectricEnergy": {
+        "description": "**有効電力量（Wh）**",
+        "type": "number",
+        "example": 7.03
+      },
+      "electricCurrent1": {
+        "description": "**電流１**",
+        "type": "number",
+        "example": 9.339
+      },
+      "electricCurrent2": {
+        "description": "**電流２**",
+        "type": "number",
+        "example": 9.339
+      },
+      "electricCurrent3": {
+        "description": "**電流３**",
+        "type": "number",
+        "example": 9.339
+      },
+      "voltage1": {
+        "description": "**電圧１**",
+        "type": "number",
+        "example": 214.1
+      },
+      "voltage2": {
+        "description": "**電圧２**",
+        "type": "number",
+        "example": 214.1
+      },
+      "voltage3": {
+        "description": "**電圧３**",
+        "type": "number",
+        "example": 214.1
+      },
+      "frequency": {
+        "description": "**周波数**",
+        "type": "number",
+        "example": 50
+      },
+      "powerFactor": {
+        "description": "**力率**",
+        "type": "number",
+        "example": 0.75
+      },
+      "energySensor": {
+        "description": "**エネルギーセンサーデータ**",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "**エネルギーセンサー識別**",
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "activeElectricPower": {
+            "$ref": "#/components/schemas/activeElectricPower"
+          },
+          "activeElectricEnergy": {
+            "$ref": "#/components/schemas/activeElectricEnergy"
+          },
+          "electricCurrent1": {
+            "$ref": "#/components/schemas/electricCurrent1"
+          },
+          "electricCurrent2": {
+            "$ref": "#/components/schemas/electricCurrent2"
+          },
+          "electricCurrent3": {
+            "$ref": "#/components/schemas/electricCurrent3"
+          },
+          "voltage1": {
+            "$ref": "#/components/schemas/voltage1"
+          },
+          "voltage2": {
+            "$ref": "#/components/schemas/voltage2"
+          },
+          "voltage3": {
+            "$ref": "#/components/schemas/voltage3"
+          },
+          "frequency": {
+            "$ref": "#/components/schemas/frequency"
+          },
+          "powerFactor": {
+            "$ref": "#/components/schemas/powerFactor"
+          }
+        },
+        "required": [
+          "id",
+          "activeElectricPower",
+          "activeElectricEnergy",
+          "electricCurrent1",
+          "electricCurrent2",
+          "electricCurrent3",
+          "voltage1",
+          "voltage2",
+          "voltage3",
+          "frequency",
+          "powerFactor"
+        ]
+      },
+      "energySensors": {
+        "description": "エネルギーセンサーデータの配列",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/energySensor"
+        }
+      },
+      "temperature": {
+        "description": "**温度**",
+        "type": "number",
+        "example": 25.02
+      },
+      "humidity": {
+        "description": "**湿度**",
+        "type": "number",
+        "example": 7.03
+      },
+      "discomfortIndex": {
+        "description": "**不快指数**",
+        "type": "number",
+        "example": 9.339
+      },
+      "environmentalSensor": {
+        "description": "環境センサーデータ",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "**環境センサー識別**",
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "temperature": {
+            "$ref": "#/components/schemas/temperature"
+          },
+          "humidity": {
+            "$ref": "#/components/schemas/humidity"
+          },
+          "discomfortIndex": {
+            "$ref": "#/components/schemas/discomfortIndex"
+          }
+        },
+        "required": [
+          "id",
+          "temperature",
+          "humidity",
+          "discomfortIndex"
+        ]
+      },
+      "environmentalSensors": {
+        "description": "環境センサーデータの配列",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/environmentalSensor"
+        }
+      },
+      "inputContact": {
+        "description": "入力接点データ",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "**入力接点識別**",
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "status": {
+            "description": "**入力データ**　状態（ON: true / OFF: false）",
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "id",
+          "status"
+        ]
+      },
+      "inputContacts": {
+        "description": "入力接点データの配列",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/inputContact"
+        }
+      },
+      "outputContact": {
+        "description": "出力接点データ",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "**出力接点識別**",
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "status": {
+            "description": "**出力データ**　状態（ON: true / OFF: false）",
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "id",
+          "status"
+        ]
+      },
+      "outputContacts": {
+        "description": "出力接点データの配列",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/outputContact"
+        }
+      },
+      "controlOrder": {
+        "description": "**制御命令**　（制御: true / 解除: false）",
+        "type": "boolean"
+      },
+      "controlState": {
+        "description": "**制御状況**  \n`DemandControl`: デマンド制御  \n`AutoControl`: 自動制御  \n`RemoteControl`: 遠隔制御  \n`Release`: 解除  \n`Defrost`: デフロスト  \n`RemoteDefrostStop`: 遠隔デフロスト停止  \n`Unknown`: 不明",
+        "type": "string",
+        "enum": [
+          "DemandControl",
+          "AutoControl",
+          "RemoteControl",
+          "Release",
+          "Defrost",
+          "RemoteDefrostStop",
+          "Unknown"
+        ],
+        "example": "DemandControl"
+      },
+      "operating": {
+        "description": "機器が稼働しているかどうか  \n電力＞稼働判断電力　の結果\n",
+        "type": "boolean",
+        "example": true
+      },
+      "operatingRate": {
+        "description": "**稼働率**（少数表記）",
+        "type": "number",
+        "example": 0.631
+      },
+      "electricEnergy": {
+        "description": "電力量（Wh）",
+        "type": "number",
+        "example": 7.03
+      },
+      "electricPower": {
+        "description": "電力(w)",
+        "type": "number",
+        "example": 33.4
+      },
+      "equipmentState": {
+        "description": "機器別ステートデータ",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "**機器識別**",
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "controlOrder": {
+            "$ref": "#/components/schemas/controlOrder"
+          },
+          "controlState": {
+            "$ref": "#/components/schemas/controlState"
+          },
+          "operating": {
+            "$ref": "#/components/schemas/operating"
+          },
+          "operatingRate": {
+            "$ref": "#/components/schemas/operatingRate"
+          },
+          "electricEnergy": {
+            "$ref": "#/components/schemas/electricEnergy"
+          },
+          "electricPower": {
+            "$ref": "#/components/schemas/electricPower"
+          }
+        },
+        "required": [
+          "id",
+          "controlOrder",
+          "controlState",
+          "operating",
+          "operatingRate",
+          "electricEnergy",
+          "electricPower"
+        ]
+      },
+      "equipmentStates": {
+        "description": "機器データの配列",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/equipmentState"
+        }
+      },
+      "demandArgs": {
+        "description": "デマンドデータ登録の引数",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "**デマンドパルス識別**",
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "baseId": {
+            "$ref": "#/components/schemas/baseId"
+          },
+          "measuredAt": {
+            "$ref": "#/components/schemas/measuredAt"
+          },
+          "currentElectricity": {
+            "$ref": "#/components/schemas/currentElectricity"
+          },
+          "predictedElectricity": {
+            "$ref": "#/components/schemas/predictedElectricity"
+          },
+          "adjustedElectricity": {
+            "$ref": "#/components/schemas/adjustedElectricity"
+          },
+          "remainingSeconds": {
+            "$ref": "#/components/schemas/remainingSeconds"
+          },
+          "demandState": {
+            "$ref": "#/components/schemas/demandState"
+          }
+        },
+        "required": [
+          "id",
+          "baseId",
+          "measuredAt",
+          "currentElectricity",
+          "predictedElectricity",
+          "adjustedElectricity",
+          "remainingSeconds",
+          "demandState"
+        ]
+      },
+      "energySensorArgs": {
+        "description": "エネルギーセンサーデータ登録の引数",
+        "type": "object",
+        "properties": {
+          "baseId": {
+            "$ref": "#/components/schemas/baseId"
+          },
+          "measuredAt": {
+            "$ref": "#/components/schemas/measuredAt"
+          },
+          "data": {
+            "$ref": "#/components/schemas/energySensors"
+          }
+        },
+        "required": [
+          "baseId",
+          "measuredAt",
+          "data"
+        ]
+      },
+      "environmentalSensorArgs": {
+        "description": "環境センサーデータ登録の引数",
+        "type": "object",
+        "properties": {
+          "baseId": {
+            "$ref": "#/components/schemas/baseId"
+          },
+          "measuredAt": {
+            "$ref": "#/components/schemas/measuredAt"
+          },
+          "data": {
+            "$ref": "#/components/schemas/environmentalSensors"
+          }
+        },
+        "required": [
+          "baseId",
+          "measuredAt",
+          "data"
+        ]
+      },
+      "inputContactArgs": {
+        "description": "入力接点データ登録の引数",
+        "type": "object",
+        "properties": {
+          "baseId": {
+            "$ref": "#/components/schemas/baseId"
+          },
+          "measuredAt": {
+            "$ref": "#/components/schemas/measuredAt"
+          },
+          "data": {
+            "$ref": "#/components/schemas/inputContacts"
+          }
+        },
+        "required": [
+          "baseId",
+          "measuredAt",
+          "data"
+        ]
+      },
+      "outputContactArgs": {
+        "description": "出力接点データ登録の引数",
+        "type": "object",
+        "properties": {
+          "baseId": {
+            "$ref": "#/components/schemas/baseId"
+          },
+          "measuredAt": {
+            "$ref": "#/components/schemas/measuredAt"
+          },
+          "data": {
+            "$ref": "#/components/schemas/outputContacts"
+          }
+        },
+        "required": [
+          "baseId",
+          "measuredAt",
+          "data"
+        ]
+      },
+      "equipmentStateArgs": {
+        "description": "機器別ステート登録の引数",
+        "type": "object",
+        "properties": {
+          "baseId": {
+            "$ref": "#/components/schemas/baseId"
+          },
+          "measuredAt": {
+            "$ref": "#/components/schemas/measuredAt"
+          },
+          "data": {
+            "$ref": "#/components/schemas/equipmentStates"
+          }
+        },
+        "required": [
+          "baseId",
+          "measuredAt",
+          "data"
+        ]
+      },
+      "alertSensorArgs": {
+        "description": "センサー監視アラート登録の引数",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "アラートを発報した項目の識別",
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "baseId": {
+            "$ref": "#/components/schemas/baseId"
+          },
+          "measuredAt": {
+            "$ref": "#/components/schemas/measuredAt"
+          },
+          "occurredAt": {
+            "$ref": "#/components/schemas/occurredAt"
+          },
+          "kind": {
+            "description": "アラート発報したセンサーの種類  \n`EnergySensor`: エネルギーセンサー  \n`EnvironmentalSensor`: 環境センサー  \n`InputContact`: 入力接点  \n`OutputContact`: 出力接点",
+            "type": "string",
+            "enum": [
+              "EnergySensor",
+              "EnergySensorGroup",
+              "EnvironmentalSensor",
+              "InputContact",
+              "OutputContact"
+            ],
+            "example": "EnergySensor"
+          },
+          "sensorMonitoringConditionId": {
+            "description": "**センサー監視条件識別**",
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "message": {
+            "description": "**アラート状況**",
+            "type": "string",
+            "example": "100"
+          }
+        },
+        "required": [
+          "id",
+          "baseId",
+          "measuredAt",
+          "kind",
+          "sensorMonitoringConditionId",
+          "message"
+        ]
+      },
+      "alertConnectionArgs": {
+        "description": "通信アラート状況登録の引数",
+        "type": "object",
+        "properties": {
+          "baseId": {
+            "$ref": "#/components/schemas/baseId"
+          },
+          "parentDeviceId": {
+            "description": "アラート送信元の**親機識別**",
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "measuredAt": {
+            "$ref": "#/components/schemas/measuredAt"
+          },
+          "demandPulseId": {
+            "description": "接続できない**デマンドパルス識別**（単数）",
+            "type": "string",
+            "nullable": true,
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "childDeviceIds": {
+            "description": "接続できない**子機識別**（複数）",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "550e8400-e29b-41d4-a716-446655440000"
+            }
+          },
+          "energySensorIds": {
+            "description": "接続できない**エネルギーセンサー識別**（複数）",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "550e8400-e29b-41d4-a716-446655440000"
+            }
+          },
+          "environmentalSensorIds": {
+            "description": "接続できない**環境センサー識別**（複数）",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "550e8400-e29b-41d4-a716-446655440000"
+            }
+          },
+          "inputContactIds": {
+            "description": "接続できない**入力接点識別**（複数）",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "550e8400-e29b-41d4-a716-446655440000"
+            }
+          },
+          "outputContactIds": {
+            "description": "接続できない**出力接点識別**（複数）",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "550e8400-e29b-41d4-a716-446655440000"
+            }
+          }
+        },
+        "required": [
+          "baseId",
+          "parentDeviceId",
+          "measuredAt",
+          "demandPulseId",
+          "childDeviceIds",
+          "energySensorIds",
+          "environmentalSensorIds",
+          "inputContactIds",
+          "outputContactIds"
+        ]
+      },
+      "alertBatteryArgs": {
+        "description": "電池残量アラート登録の引数",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "**デマンドパルス識別**",
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "baseId": {
+            "$ref": "#/components/schemas/baseId"
+          },
+          "measuredAt": {
+            "$ref": "#/components/schemas/measuredAt"
+          }
+        },
+        "required": [
+          "id",
+          "baseId",
+          "measuredAt"
+        ]
+      },
+      "alertUpsArgs": {
+        "description": "親機電源アラート登録の引数",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "**親機識別**",
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "baseId": {
+            "$ref": "#/components/schemas/baseId"
+          },
+          "measuredAt": {
+            "$ref": "#/components/schemas/measuredAt"
+          },
+          "message": {
+            "description": "**アラート状況**",
+            "type": "string",
+            "example": "アラートが発生しました"
+          }
+        },
+        "required": [
+          "id",
+          "baseId",
+          "measuredAt",
+          "message"
+        ]
+      },
+      "alertSystemArgs": {
+        "description": "親機システムアラート登録の引数",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "**親機識別**",
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "baseId": {
+            "$ref": "#/components/schemas/baseId"
+          },
+          "measuredAt": {
+            "$ref": "#/components/schemas/measuredAt"
+          },
+          "errorCode": {
+            "description": "エラーコード",
+            "type": "string",
+            "example": "E001"
+          },
+          "message": {
+            "description": "アラートメッセージ",
+            "type": "string",
+            "example": "マスターデータに異常があります"
+          }
+        },
+        "required": [
+          "id",
+          "baseId",
+          "measuredAt",
+          "errorCode",
+          "message"
+        ]
+      },
+      "alertDemandArgs": {
+        "description": "デマンドアラート登録の引数",
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "**デマンドパルス識別**",
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "baseId": {
+            "$ref": "#/components/schemas/baseId"
+          },
+          "measuredAt": {
+            "$ref": "#/components/schemas/measuredAt"
+          },
+          "demandState": {
+            "$ref": "#/components/schemas/demandState"
+          },
+          "message": {
+            "description": "**現在電力(kw)**／**予測電力(kw)**／**目標電力(kw)**／**限界電力(kw)**の現在値を記載したメッセージ",
+            "type": "string",
+            "example": "現在電力: 227 kW、予測電力: 248 kW、目標電力: 245 kW、限界電力: 270 kW"
+          }
+        },
+        "required": [
+          "id",
+          "baseId",
+          "measuredAt",
+          "demandState",
+          "message"
+        ]
+      },
+      "postResponse": {
+        "description": "送信成功時のレスポンス",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "レスポンスメッセージ",
+            "example": "OK"
+          },
+          "traceId": {
+            "type": "string",
+            "description": "トレース用ID",
+            "example": "6b961e59-75a2-5c91-7e96-cc352f2d65bd"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "name": "x-api-key",
+        "in": "header",
+        "description": "認証に用いるAPI KEYを設定する"
+      },
+      "apiAuthorizerName": {
+        "type": "apiKey",
+        "name": "x-amz-customauthorizer-name",
+        "in": "header",
+        "description": "認証に用いるカスタムオーソライザーの名前を設定する"
+      }
+    }
+  }
+}

@@ -1,0 +1,89 @@
+@startuml boot
+!pragma teoz true
+title センサー情報通知シーケンス
+
+participant linux
+participant schedule
+participant cloud
+participant child
+participant aram
+participant demand
+database    内部SQL
+database    クラウド
+database    アラートFIFO
+
+== (8)-1 センサー監視（正常） ==
+
+schedule --> child:子機情報取得要求
+activate schedule
+child -> :子機1・温度センサ情報取得要求
+child <- :子機1・温度センサ情報
+child -> :子機1・電力量モニタ情報取得要求
+child <- :子機1・電力量モニタ情報
+child -> :子機1・IO情報取得要求
+child <- :子機1・IO情報
+
+
+child -> 内部SQL:子機1・データ書き込み
+child --> aram:子機1・予測値計算要求
+
+
+activate aram
+aram -> aram:電流、電圧、電力、力率、温度、湿度、不快指数の閾値超過
+cloud x<- aram:抑制時間（異常継続時間）以内のためアラート発報しない
+
+...
+
+schedule --> child:子機情報取得要求
+child -> :子機1・温度センサ情報取得要求
+child <- :子機1・温度センサ情報
+child -> :子機1・電力量モニタ情報取得要求
+child <- :子機1・電力量モニタ情報
+child -> :子機1・IO情報取得要求
+child <- :子機1・IO情報
+
+child -> 内部SQL:子機1・データ書き込み
+child --> aram:子機1・予測値計算要求
+
+aram -> aram:電流、電圧、電力、力率、温度、湿度、不快指数の閾値超過
+deactivate aram
+note right aram : 抑制時間（異常継続時間）以上
+cloud <- aram:抑制時間（異常継続時間）以上のためアラート発報
+cloud -> クラウド:アラート発報
+
+cloud <- aram:子機1情報送信
+
+
+== (8)-1 センサー監視（異常） ==
+
+note across:クラウド通信不可の場合は内部に貯めてつながったら一気に送る貯める数は要検討
+
+schedule --> child:子機情報取得要求
+
+...
+
+child --> aram:子機1・予測値計算要求
+
+aram -> aram:電流、電圧、電力、力率、温度、湿度、不快指数の閾値超過
+note right aram : 抑制時間（異常継続時間）以上
+cloud <- aram:抑制時間（異常継続時間）以上のためアラート発報
+cloud ->x クラウド:アラート発報
+cloud -> アラートFIFO:クラウド通信失敗の場合はFIFOにアラートを貯める
+
+cloud <- aram:子機1情報送信
+
+
+...
+
+note right cloud : クラウド通信復旧
+
+loop 未送信アラートをすべて送信し終えるまでループ
+    cloud <- アラートFIFO:未送信アラート取得
+    cloud -> クラウド:アラート発報
+    break クラウドとの通信が失敗した場合は抜ける
+        cloud ->x クラウド:通信失敗
+    end
+end
+
+
+@enduml

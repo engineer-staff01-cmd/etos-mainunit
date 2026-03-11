@@ -1,0 +1,13 @@
+[Unit]
+Description = etos-mainunit daemon
+Requires=ModemManager.service
+After=ModemManager.service
+
+[Service]
+ExecStart = /usr/bin/bash -c 'sleep 60; /root/etos; if [ $? -ne 0 ]; then /srv/bin/default; fi'
+
+Restart = always
+Type = simple
+
+[Install]
+WantedBy = multi-user.target

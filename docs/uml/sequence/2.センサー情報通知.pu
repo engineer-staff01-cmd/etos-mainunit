@@ -1,0 +1,73 @@
+@startuml boot
+!pragma teoz true
+title センサー情報通知シーケンス
+
+participant linux
+participant schedule
+participant cloud
+participant child
+participant aram
+participant demand
+database    内部SQL
+database    クラウド
+
+== センサー情報取得（正常） ==
+
+{start} schedule --> child:子機情報取得要求
+activate schedule
+child -> :子機1・温度センサ情報取得要求
+child <- :子機1・温度センサ情報
+child -> :子機1・電力量モニタ情報取得要求
+child <- :子機1・電力量モニタ情報
+child -> :子機1・IO情報取得要求
+child <- :子機1・IO情報
+
+
+child -> 内部SQL:子機1・データ書き込み
+child --> aram:子機1・予測値計算要求
+aram -> aram:アラート監視
+cloud <- aram:子機1情報送信
+
+...
+note right child:子機6台数分実施(増減可能なように設定しておく)
+...
+
+cloud <- aram:子機6情報送信
+
+
+{end} schedule --> child:子機情報取得要求
+{start} <-> {end}:10秒以内
+note right schedule:6台以下の場合、それ以上の台数は1台あたり＋何秒かかるか確認する
+deactivate schedule
+
+
+== センサー情報取得（異常） ==
+
+
+schedule --> child:子機情報取得要求
+activate schedule
+{start1} child -> :子機1・温度センサ情報取得要求
+activate child
+
+...
+
+
+child x<-]:子機1・温度センサ情報
+|||
+note right child:失敗した時間の情報を保管するなどの処理はしない
+
+{end1} child -> aram:(2)-8 通信アラート状況要求
+{start1} <-> {end1}:5秒以内、時間は要検討（10秒 - 3子機分通信時間にする？）
+deactivate child
+
+aram -> aram:アラート監視
+cloud <- aram:(2)-8 通信アラート状況発報
+
+...
+
+cloud <- aram:子機6情報送信
+
+deactivate schedule
+
+
+@enduml

@@ -1,0 +1,20 @@
+@startuml boot
+!pragma teoz true
+title センサー情報通知シーケンス
+
+participant linux
+participant schedule
+participant cloud
+participant child
+participant aram
+participant demand
+database    内部SQL
+database    クラウド
+database    アラートFIFO
+
+
+== (8)-3 出力（制御）接点に対する監視（正常） ==
+== (8)-3 出力（制御）接点に対する監視（異常） ==
+
+
+@enduml

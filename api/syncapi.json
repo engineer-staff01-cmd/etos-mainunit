@@ -1,0 +1,2022 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Sync Data API",
+    "description": "\nローカルからクラウドのデータを同期するAPI\n\n# 凡例\n\n各項目のDescriptionは以下の凡例に従う。\n\n- **太字フォント**：要求定義書に紐づく項目がある場合その名前を表記する\n\n# Authentication\n\n<!-- ReDoc-Inject: <security-definitions> -->",
+    "version": "0.2.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "http://localhost:3333",
+      "description": "ローカル開発用サーバー"
+    },
+    {
+      "url": "https://api.frig.ghost-inc.work",
+      "description": "Ghost inc環境の開発用サーバー"
+    },
+    {
+      "url": "https://staging.api.ecoramdar.jp",
+      "description": "イートス様環境のステージング用サーバー"
+    },
+    {
+      "url": "https://api.ecoramdar.jp",
+      "description": "イートス様環境の本番用サーバー"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "x-api-key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "認証に用いるAPI KEYを設定する"
+      }
+    },
+    "schemas": {
+      "ManualControlOrderForLocal": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "**制御命令**  \ntrue: 制御  \nfalse: 制御解除"
+          },
+          "equipmentId": {
+            "type": "string",
+            "description": "**機器識別**",
+            "example": "5c9046aa-8917-4a73-bc73-118627b14d35"
+          }
+        },
+        "required": [
+          "enabled",
+          "equipmentId"
+        ]
+      },
+      "ManualDefrostOrderForLocal": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "**停止命令**  \ntrue: 停止  \nfalse: 停止解除"
+          },
+          "outputContactId": {
+            "type": "string",
+            "description": "**出力接点識別**",
+            "example": "5c9046aa-8917-4a73-bc73-118627b14d35"
+          }
+        },
+        "required": [
+          "enabled",
+          "outputContactId"
+        ]
+      },
+      "DemandControlOrderForLocal": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "**デマンド制御**  \ntrue: 制御　false: 制御しない"
+          }
+        },
+        "required": [
+          "enabled"
+        ]
+      },
+      "SensorMonitoringConditionForLocal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "**センサー監視識別**"
+          },
+          "name": {
+            "type": "string",
+            "description": "**名称**"
+          },
+          "anomalyDurationSeconds": {
+            "type": "integer",
+            "description": "**異常継続時間（秒）**"
+          },
+          "message": {
+            "type": "string",
+            "description": "**メッセージ**"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "**有効**"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ElectricCurrent1",
+              "ElectricCurrent2",
+              "ElectricCurrent3",
+              "Voltage1",
+              "Voltage2",
+              "Voltage3",
+              "PowerFactor",
+              "ElectricPower",
+              "Temperature",
+              "Humidity",
+              "DiscomfortIndex",
+              "BatteryLevel",
+              "Breaker",
+              "Control",
+              "Etc"
+            ],
+            "description": "**監視対象カテゴリ**  \nElectricCurrent1: 電流1（A）  \nElectricCurrent2: 電流2（A）  \nElectricCurrent3: 電流3（A）  \nVoltage1: 電圧1（V）  \nVoltage2: 電圧2（V）  \nVoltage3: 電圧3（V）  \nPowerFactor: 力率  \nElectricPower: 電力（W）  \nTemperature: 温度（℃）  \nHumidity: 湿度（％）  \nDiscomfortIndex: 不快指数（DI）  \nBatteryLevel: 電池残量  \nBreaker: ブレーカー遮断  \nControl: 制御ONOFF（秒）  \nEtc:その他"
+          },
+          "anomalyType": {
+            "type": "string",
+            "enum": [
+              "More",
+              "Less",
+              "ON",
+              "OFF"
+            ],
+            "description": "**異常判断**  \nMore: 上回り  \nLess: 下回り  \nON: ON  \nOFF: OFF"
+          },
+          "threshold": {
+            "type": "number",
+            "description": "**閾値**"
+          },
+          "energySensorId": {
+            "type": "string",
+            "nullable": true,
+            "description": "**エネルギーセンサー識別**"
+          },
+          "environmentalSensorId": {
+            "type": "string",
+            "nullable": true,
+            "description": "**環境センサー識別**"
+          },
+          "inputContactId": {
+            "type": "string",
+            "nullable": true,
+            "description": "**入力接点識別**"
+          },
+          "outputContactId": {
+            "type": "string",
+            "nullable": true,
+            "description": "**出力接点識別**"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "anomalyDurationSeconds",
+          "message",
+          "enabled",
+          "category",
+          "anomalyType",
+          "threshold",
+          "energySensorId",
+          "environmentalSensorId",
+          "inputContactId",
+          "outputContactId"
+        ]
+      },
+      "EnergySensorForLocal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "**エネルギーセンサー識別**"
+          },
+          "name": {
+            "type": "string",
+            "description": "**名称**"
+          },
+          "deviceName": {
+            "type": "string",
+            "description": "**デバイス名**",
+            "nullable": true
+          },
+          "voltage": {
+            "type": "number",
+            "description": "**電圧**",
+            "nullable": true
+          },
+          "powerFactor": {
+            "type": "number",
+            "description": "**力率**",
+            "nullable": true
+          },
+          "coolingRatedElectricPowerConsumption": {
+            "type": "number",
+            "description": "**定格消費電力（冷房）（w）**"
+          },
+          "heatingRatedElectricPowerConsumption": {
+            "type": "number",
+            "description": "**定格消費電力（暖房）（w）**"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "**有効**"
+          },
+          "connectionId": {
+            "type": "integer",
+            "description": "接続先（ID）",
+            "nullable": true
+          },
+          "connectionChannel": {
+            "type": "integer",
+            "description": "接続先（Channel）",
+            "nullable": true
+          },
+          "childDeviceId": {
+            "type": "string",
+            "nullable": true,
+            "description": "**接続先（子機）**  \n子機識別"
+          },
+          "sensorMonitoringConditions": {
+            "description": "監視条件のリスト  \n同期リクエスト時点で有効な監視条件のリストを返します",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SensorMonitoringConditionForLocal"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "deviceName",
+          "coolingRatedElectricPowerConsumption",
+          "heatingRatedElectricPowerConsumption",
+          "enabled",
+          "childDeviceId",
+          "sensorMonitoringConditions"
+        ]
+      },
+      "InsideAirFanSensorForLocal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "**室内機ファンセンサー識別**"
+          },
+          "name": {
+            "type": "string",
+            "description": "**名称**"
+          },
+          "controlElectricCurrent": {
+            "type": "number",
+            "description": "**制御時電流**"
+          },
+          "operatingElectricCurrent": {
+            "type": "number",
+            "description": "**稼働時電流**"
+          },
+          "voltage": {
+            "type": "number",
+            "description": "**電圧**"
+          },
+          "powerFactor": {
+            "type": "number",
+            "description": "**力率**"
+          },
+          "ratedElectricPowerConsumption": {
+            "type": "number",
+            "description": "**定格電力（w）**"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "**有効**"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "controlElectricCurrent",
+          "operatingElectricCurrent",
+          "voltage",
+          "powerFactor",
+          "ratedElectricPowerConsumption",
+          "enabled"
+        ]
+      },
+      "EnvironmentalSensorForLocal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "**環境センサー識別**"
+          },
+          "name": {
+            "type": "string",
+            "description": "**名称**"
+          },
+          "deviceName": {
+            "type": "string",
+            "description": "**デバイス名**",
+            "nullable": true
+          },
+          "correctionAmount": {
+            "type": "number",
+            "description": "**補正量（℃）**",
+            "nullable": true
+          },
+          "correctionRatio": {
+            "type": "number",
+            "description": "**補正倍率**",
+            "nullable": true
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "**有効**"
+          },
+          "connectionId": {
+            "type": "integer",
+            "description": "接続先（ID）",
+            "nullable": true
+          },
+          "connectionChannel": {
+            "type": "integer",
+            "description": "接続先（Channel）",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "Temperature",
+              "Humidity"
+            ],
+            "description": "**機器カテゴリ**  \nTemperature: 温度  \nHumidity: 湿度"
+          },
+          "childDeviceId": {
+            "type": "string",
+            "nullable": true,
+            "description": "**接続先（子機）**  \n子機識別"
+          },
+          "sensorMonitoringConditions": {
+            "description": "監視条件のリスト  \n同期リクエスト時点で有効な監視条件のリストを返します",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SensorMonitoringConditionForLocal"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "deviceName",
+          "enabled",
+          "category",
+          "childDeviceId",
+          "sensorMonitoringConditions"
+        ]
+      },
+      "InputContactForLocal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "**入力接点識別**"
+          },
+          "name": {
+            "type": "string",
+            "description": "**名称**"
+          },
+          "deviceName": {
+            "type": "string",
+            "description": "**デバイス名**",
+            "nullable": true
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "**有効**"
+          },
+          "connectionId": {
+            "type": "integer",
+            "description": "接続先（ID）",
+            "nullable": true
+          },
+          "connectionChannel": {
+            "type": "integer",
+            "description": "接続先（Channel）",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "Defrost",
+              "Breaker",
+              "Etc"
+            ],
+            "description": "**入力カテゴリ**  \nDefrost: デフロスト  \nBreaker: ブレーカー  \nEtc: その他"
+          },
+          "childDeviceId": {
+            "type": "string",
+            "nullable": true,
+            "description": "**接続先（子機）**  \n子機識別"
+          },
+          "sensorMonitoringConditions": {
+            "description": "監視条件のリスト  \n同期リクエスト時点で有効な監視条件のリストを返します",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SensorMonitoringConditionForLocal"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "deviceName",
+          "enabled",
+          "category",
+          "childDeviceId",
+          "sensorMonitoringConditions"
+        ]
+      },
+      "OutputContactForLocal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "**出力接点識別**"
+          },
+          "name": {
+            "type": "string",
+            "description": "**名称**"
+          },
+          "deviceName": {
+            "type": "string",
+            "description": "**デバイス名**",
+            "nullable": true
+          },
+          "controlMethod": {
+            "type": "string",
+            "enum": [
+              "Stop",
+              "Capacity"
+            ],
+            "description": "**制御方法**"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "**有効**"
+          },
+          "connectionId": {
+            "type": "integer",
+            "description": "接続先（ID）",
+            "nullable": true
+          },
+          "connectionChannel": {
+            "type": "integer",
+            "description": "接続先（Channel）",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "Control",
+              "DefrostControl"
+            ],
+            "description": "**出力カテゴリ**  \nControl: 制御  \nDefrostControl: デフロスト制御"
+          },
+          "childDeviceId": {
+            "type": "string",
+            "nullable": true,
+            "description": "**接続先（子機）**  \n子機識別"
+          },
+          "sensorMonitoringConditions": {
+            "description": "監視条件のリスト  \n同期リクエスト時点で有効な監視条件のリストを返します",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SensorMonitoringConditionForLocal"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "deviceName",
+          "controlMethod",
+          "enabled",
+          "category",
+          "childDeviceId",
+          "sensorMonitoringConditions"
+        ]
+      },
+      "EquipmentControlConditionForLocal": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "**名称**"
+          },
+          "controlTarget": {
+            "type": "boolean",
+            "description": "**制御対象**"
+          },
+          "demandControlTarget": {
+            "type": "boolean",
+            "description": "**デマンド制御対象**"
+          },
+          "controlSeconds": {
+            "type": "number",
+            "description": "**制御時間**"
+          },
+          "controlReleaseSeconds": {
+            "type": "number",
+            "description": "**制御解除時間**"
+          },
+          "controlStartTemperature": {
+            "type": "number",
+            "description": "**制御開始温度**",
+            "nullable": true
+          },
+          "controlEndTemperature": {
+            "type": "number",
+            "description": "**制御開始温度**",
+            "nullable": true
+          },
+          "controlStartHumidity": {
+            "type": "number",
+            "description": "**制御開始湿度**",
+            "nullable": true
+          },
+          "controlEndHumidity": {
+            "type": "number",
+            "description": "**制御終了湿度**",
+            "nullable": true
+          },
+          "controlStartDiscomfortIndex": {
+            "type": "number",
+            "description": "**制御開始不快指数**",
+            "nullable": true
+          },
+          "controlEndDiscomfortIndex": {
+            "type": "number",
+            "description": "**制御終了不快指数**",
+            "nullable": true
+          },
+          "demandControlStartTemperature": {
+            "type": "number",
+            "description": "**デマンド制御開始温度**",
+            "nullable": true
+          },
+          "demandControlEndTemperature": {
+            "type": "number",
+            "description": "**デマンド制御終了温度**",
+            "nullable": true
+          },
+          "demandControlStartHumidity": {
+            "type": "number",
+            "description": "**デマンド制御開始湿度**",
+            "nullable": true
+          },
+          "demandControlEndHumidity": {
+            "type": "number",
+            "description": "**デマンド制御終了湿度**",
+            "nullable": true
+          },
+          "demandControlStartDiscomfortIndex": {
+            "type": "number",
+            "description": "**デマンド制御開始不快指数**",
+            "nullable": true
+          },
+          "demandControlEndDiscomfortIndex": {
+            "type": "number",
+            "description": "**デマンド制御終了不快指数**",
+            "nullable": true
+          },
+          "equipmentId": {
+            "type": "string",
+            "nullable": true,
+            "description": "**機器識別**"
+          }
+        },
+        "required": [
+          "name",
+          "controlTarget",
+          "demandControlTarget",
+          "controlSeconds",
+          "controlReleaseSeconds",
+          "equipmentId"
+        ]
+      },
+      "EquipmentForLocal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "**機器識別**"
+          },
+          "name": {
+            "type": "string",
+            "description": "**名称**"
+          },
+          "operationJudgmentElectricPower": {
+            "type": "number",
+            "description": "**稼働判断電力（w）**"
+          },
+          "requiredOperatingTime": {
+            "type": "integer",
+            "description": "**稼働必須時間**（秒）"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "Auto",
+              "Cooling",
+              "Heating"
+            ],
+            "description": "**冷暖モード**  \nAuto: 自動  \nCooling: 冷房のみ  \nHeating: 暖房のみ"
+          },
+          "judgmentCriteria": {
+            "type": "string",
+            "enum": [
+              "Max",
+              "Min",
+              "Average"
+            ],
+            "description": "判断基準  \nMax: 最大  \nMin: 最小  \nAverage: 平均"
+          },
+          "energySensor": {
+            "nullable": true,
+            "description": "**エネルギーセンサー**",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EnergySensorForLocal"
+              }
+            ]
+          },
+          "insideAirFanSensor": {
+            "nullable": true,
+            "description": "**室内機ファンセンサー**",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InsideAirFanSensorForLocal"
+              }
+            ]
+          },
+          "environmentalSensors": {
+            "description": "**環境センサー**",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentalSensorForLocal"
+            }
+          },
+          "inputContact": {
+            "nullable": true,
+            "description": "**デフロスト入力接点**",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/InputContactForLocal"
+              }
+            ]
+          },
+          "intermittentControlOutputContact": {
+            "nullable": true,
+            "description": "**制御接点（間欠）**",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OutputContactForLocal"
+              }
+            ]
+          },
+          "capacityControlOutputContact": {
+            "nullable": true,
+            "description": "**制御接点（容量）**",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OutputContactForLocal"
+              }
+            ]
+          },
+          "defrostControlOutputContact": {
+            "nullable": true,
+            "description": "**デフロスト制御接点**",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OutputContactForLocal"
+              }
+            ]
+          },
+          "equipmentControlCondition": {
+            "nullable": true,
+            "description": "**制御条件**  \n同期リクエスト時点で有効な制御条件を返します",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EquipmentControlConditionForLocal"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "operationJudgmentElectricPower",
+          "requiredOperatingTime",
+          "mode",
+          "judgmentCriteria",
+          "energySensor",
+          "insideAirFanSensor",
+          "environmentalSensors",
+          "inputContact",
+          "intermittentControlOutputContact",
+          "capacityControlOutputContact",
+          "defrostControlOutputContact",
+          "equipmentControlCondition"
+        ]
+      },
+      "SyncFrequencyForLocal": {
+        "type": "object",
+        "properties": {
+          "masterData": {
+            "type": "integer",
+            "description": "マスターデータの同期頻度（秒）"
+          },
+          "manualControlOrder": {
+            "type": "integer",
+            "description": "緊急制御命令の同期頻度（秒）"
+          },
+          "manualDefrostOrder": {
+            "type": "integer",
+            "description": "緊急デフロスト命令の同期頻度（秒）"
+          },
+          "parentDeviceRestartOrder": {
+            "type": "integer",
+            "description": "親機再起動の同期頻度（秒）"
+          },
+          "demandControlOrder": {
+            "type": "integer",
+            "description": "デマンド制御命令の同期頻度（秒）"
+          }
+        },
+        "required": [
+          "masterData",
+          "manualControlOrder",
+          "manualDefrostOrder",
+          "parentDeviceRestartOrder",
+          "demandControlOrder"
+        ]
+      },
+      "FirmwareForLocal": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "ファームウェアファイルの名前"
+          },
+          "url": {
+            "type": "string",
+            "description": "ファームウェアファイルのURL（1時間有効）"
+          }
+        },
+        "required": [
+          "name",
+          "url"
+        ]
+      },
+      "UserForLocal": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "メールアドレス"
+          },
+          "enableDemandAlert": {
+            "type": "boolean",
+            "description": "デマンドアラートをメール通知するかどうか"
+          },
+          "enableSensorAlert": {
+            "type": "boolean",
+            "description": "センサー監視アラートをメール通知するかどうか"
+          },
+          "enableBatteryAlert": {
+            "type": "boolean",
+            "description": "電池残量アラートをメール通知するかどうか"
+          },
+          "enableUpsAlert": {
+            "type": "boolean",
+            "description": "親機電源アラートをメール通知するかどうか"
+          },
+          "enableConnectionAlert": {
+            "type": "boolean",
+            "description": "通信アラートをメール通知するかどうか"
+          },
+          "enableSystemAlert": {
+            "type": "boolean",
+            "description": "親機システムアラートをメール通知するかどうか"
+          }
+        },
+        "required": [
+          "email",
+          "enableDemandAlert",
+          "enableSensorAlert",
+          "enableBatteryAlert",
+          "enableUpsAlert",
+          "enableConnectionAlert",
+          "enableSystemAlert"
+        ]
+      },
+      "BaseForLocal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "**拠点識別**",
+            "example": "5c9046aa-8917-4a73-bc73-118627b14d35"
+          },
+          "name": {
+            "type": "string",
+            "description": "**名称**"
+          },
+          "contractElectricPower": {
+            "type": "number",
+            "description": "**契約電力（kw）**"
+          },
+          "limitElectricPower": {
+            "type": "number",
+            "description": "**限界電力（kw）**"
+          },
+          "targetElectricPower": {
+            "type": "number",
+            "description": "**目標電力（kw）**"
+          },
+          "cancellationElectricPower": {
+            "type": "number",
+            "description": "**復帰電力（kw）**"
+          },
+          "initialElectricPower": {
+            "type": "number",
+            "description": "**初期電力（kw）**"
+          },
+          "enableStoppingIndoorFan": {
+            "type": "boolean",
+            "description": "**室内機ファンの停止設定**"
+          },
+          "sendGridApiKey": {
+            "type": "string",
+            "nullable": true,
+            "description": "SendGridのAPIキー"
+          },
+          "equipments": {
+            "description": "機器のリスト",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EquipmentForLocal"
+            }
+          },
+          "syncFrequency": {
+            "description": "同期頻度設定",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SyncFrequencyForLocal"
+              }
+            ]
+          },
+          "firmware": {
+            "nullable": true,
+            "description": "ファームウェア",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FirmwareForLocal"
+              }
+            ]
+          },
+          "users": {
+            "description": "アラート送信対象のユーザー",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserForLocal"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "contractElectricPower",
+          "limitElectricPower",
+          "targetElectricPower",
+          "cancellationElectricPower",
+          "initialElectricPower",
+          "enableStoppingIndoorFan",
+          "sendGridApiKey",
+          "equipments",
+          "syncFrequency",
+          "firmware",
+          "users"
+        ]
+      },
+      "ChildDeviceForLocal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "**子機識別**"
+          },
+          "name": {
+            "type": "string",
+            "description": "**名称**"
+          },
+          "wireless": {
+            "type": "boolean",
+            "description": "\n**接続方法**  \ntrue: 無線\nfalse: 有線"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "**有効**"
+          },
+          "parentDeviceId": {
+            "type": "string",
+            "nullable": true,
+            "description": "**接続先（親機）**  \n親機識別"
+          },
+          "energySensors": {
+            "description": "エネルギーセンサー",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EnergySensorForLocal"
+            }
+          },
+          "environmentalSensors": {
+            "description": "環境センサー",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentalSensorForLocal"
+            }
+          },
+          "inputContacts": {
+            "description": "入力接点",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InputContactForLocal"
+            }
+          },
+          "outputContacts": {
+            "description": "出力接点",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OutputContactForLocal"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "wireless",
+          "enabled",
+          "parentDeviceId",
+          "energySensors",
+          "environmentalSensors",
+          "inputContacts",
+          "outputContacts"
+        ]
+      },
+      "DemandPulseForLocal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "**デマンドパルス識別**"
+          },
+          "name": {
+            "type": "string",
+            "description": "**名称**"
+          },
+          "deviceName": {
+            "type": "string",
+            "description": "**デバイス名**",
+            "nullable": true
+          },
+          "electricEnergyPerPulse": {
+            "type": "number",
+            "description": "**１パルスあたりの電力量**"
+          },
+          "notificationEnabled": {
+            "type": "boolean",
+            "description": "デマンドパルスの電池残量アラート通知 ON/OFF  \ntrue: ON  \nfalse: OFF"
+          },
+          "batteryLevelNotificationThreshold": {
+            "type": "integer",
+            "description": "電池残量アラートのしきい値（％）  \n値を下回った場合に発報"
+          },
+          "anomalyDurationSeconds": {
+            "type": "integer",
+            "description": "**異常継続時間（秒）**"
+          },
+          "message": {
+            "type": "string",
+            "description": "**メッセージ**"
+          },
+          "connectionId": {
+            "type": "integer",
+            "description": "接続先（ID）",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "deviceName",
+          "electricEnergyPerPulse",
+          "notificationEnabled",
+          "batteryLevelNotificationThreshold",
+          "anomalyDurationSeconds",
+          "message"
+        ]
+      },
+      "ParentDeviceForLocal": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "**親機識別**\n",
+            "example": "5c9046aa-8917-4a73-bc73-118627b14d35"
+          },
+          "name": {
+            "type": "string",
+            "description": "**名称**"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "**有効**"
+          },
+          "base": {
+            "description": "拠点",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/BaseForLocal"
+              }
+            ]
+          },
+          "childDevices": {
+            "description": "子機のリスト",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChildDeviceForLocal"
+            }
+          },
+          "demandPulse": {
+            "nullable": true,
+            "description": "デマンドパルス",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/DemandPulseForLocal"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "enabled",
+          "base",
+          "childDevices",
+          "demandPulse"
+        ]
+      },
+      "ParentDeviceRestartOrderForLocal": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "**主装置再起動**  \ntrue: 再起動"
+          }
+        },
+        "required": [
+          "enabled"
+        ]
+      },
+      "ParentDeviceRestartOrderResultForLocal": {
+        "type": "object",
+        "properties": {
+          "succeeded": {
+            "type": "boolean",
+            "description": "処理が成功したかどうか  \n更新対象がない場合もtrue（成功）を返す  \n例. 先に手動で命令が取り消された、親機のIDを間違えている  \ntrue: 成功  \nfalse: 失敗"
+          }
+        },
+        "required": [
+          "succeeded"
+        ]
+      },
+      "ManualControlOrderResultForLocal": {
+        "type": "object",
+        "properties": {
+          "succeeded": {
+            "type": "boolean",
+            "description": "処理が成功したかどうか  \n更新対象がない場合もtrue（成功）を返す  \n例. 先に手動で命令が取り消された、機器のIDを間違えている  \ntrue: 成功  \nfalse: 失敗"
+          }
+        },
+        "required": [
+          "succeeded"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/api/bases/{id}/manual-control-orders": {
+      "get": {
+        "operationId": "BasesController_getManualControlOrders",
+        "summary": "機器の緊急制御命令の取得",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "**拠点識別**",
+            "schema": {
+              "type": "string",
+              "example": "5c9046aa-8917-4a73-bc73-118627b14d35"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ManualControlOrderForLocal"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "APIリクエスト時のトークン認証に成功しなかった場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（403）",
+                      "example": 403
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "パスパラメータの識別に一致するリソースがない場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（404）",
+                      "example": 404
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "APIサーバー内の処理でエラーが発生した場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（500）",
+                      "example": 500
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "APIサーバーからの応答がない場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "エラーメッセージ",
+                      "example": "Service Unavailable"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-api-key": []
+          }
+        ]
+      }
+    },
+    "/api/bases/{id}/manual-defrost-orders": {
+      "get": {
+        "operationId": "BasesController_getManualDefrostOrders",
+        "summary": "出力接点の緊急デフロスト命令の取得",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "**拠点識別**",
+            "schema": {
+              "type": "string",
+              "example": "5c9046aa-8917-4a73-bc73-118627b14d35"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ManualDefrostOrderForLocal"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "APIリクエスト時のトークン認証に成功しなかった場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（403）",
+                      "example": 403
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "パスパラメータの識別に一致するリソースがない場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（404）",
+                      "example": 404
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "APIサーバー内の処理でエラーが発生した場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（500）",
+                      "example": 500
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "APIサーバーからの応答がない場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "エラーメッセージ",
+                      "example": "Service Unavailable"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-api-key": []
+          }
+        ]
+      }
+    },
+    "/api/bases/{id}/demand-control-order": {
+      "get": {
+        "operationId": "BasesController_getDemandControlOrder",
+        "summary": "デマンド制御命令の取得",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "**拠点識別**",
+            "schema": {
+              "type": "string",
+              "example": "5c9046aa-8917-4a73-bc73-118627b14d35"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DemandControlOrderForLocal"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "APIリクエスト時のトークン認証に成功しなかった場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（403）",
+                      "example": 403
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "パスパラメータの識別に一致するリソースがない場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（404）",
+                      "example": 404
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "APIサーバー内の処理でエラーが発生した場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（500）",
+                      "example": 500
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "APIサーバーからの応答がない場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "エラーメッセージ",
+                      "example": "Service Unavailable"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-api-key": []
+          }
+        ]
+      }
+    },
+    "/api/parent-devices/{id}": {
+      "get": {
+        "operationId": "ParentDevicesController_getParentDevice",
+        "summary": "親機に紐づくデータを取得",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "**親機識別**",
+            "schema": {
+              "type": "string",
+              "example": "5c9046aa-8917-4a73-bc73-118627b14d35"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParentDeviceForLocal"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "APIリクエスト時のトークン認証に成功しなかった場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（403）",
+                      "example": 403
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "パスパラメータの識別に一致するリソースがない場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（404）",
+                      "example": 404
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "APIサーバー内の処理でエラーが発生した場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（500）",
+                      "example": 500
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "APIサーバーからの応答がない場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "エラーメッセージ",
+                      "example": "Service Unavailable"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-api-key": []
+          }
+        ]
+      }
+    },
+    "/api/parent-devices/{id}/parent-device-restart-order": {
+      "get": {
+        "operationId": "ParentDevicesController_getParentDeviceRestartOrder",
+        "summary": "親機の再起動命令を取得",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "**親機識別**",
+            "schema": {
+              "type": "string",
+              "example": "5c9046aa-8917-4a73-bc73-118627b14d35"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParentDeviceRestartOrderForLocal"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "APIリクエスト時のトークン認証に成功しなかった場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（403）",
+                      "example": 403
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "パスパラメータの識別に一致するリソースがない場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（404）",
+                      "example": 404
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "APIサーバー内の処理でエラーが発生した場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（500）",
+                      "example": 500
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "APIサーバーからの応答がない場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "エラーメッセージ",
+                      "example": "Service Unavailable"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-api-key": []
+          }
+        ]
+      }
+    },
+    "/api/parent-devices/{id}/restarted": {
+      "post": {
+        "operationId": "ParentDevicesController_completeParentDeviceRestart",
+        "summary": "親機の再起動完了を通知",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "**親機識別**",
+            "schema": {
+              "type": "string",
+              "example": "5c9046aa-8917-4a73-bc73-118627b14d35"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParentDeviceRestartOrderResultForLocal"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "APIリクエスト時のトークン認証に成功しなかった場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（403）",
+                      "example": 403
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "パスパラメータの識別に一致するリソースがない場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（404）",
+                      "example": 404
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "APIサーバー内の処理でエラーが発生した場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（500）",
+                      "example": 500
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "APIサーバーからの応答がない場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "エラーメッセージ",
+                      "example": "Service Unavailable"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-api-key": []
+          }
+        ]
+      }
+    },
+    "/api/equipments/{id}/released": {
+      "post": {
+        "operationId": "EquipmentsController_releaseManualControlOrder",
+        "summary": "機器の緊急制御解除命令完了を通知",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "**機器識別**",
+            "schema": {
+              "type": "string",
+              "example": "5c9046aa-8917-4a73-bc73-118627b14d35"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManualControlOrderResultForLocal"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "APIリクエスト時のトークン認証に成功しなかった場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（403）",
+                      "example": 403
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "パスパラメータの識別に一致するリソースがない場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（404）",
+                      "example": 404
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "APIサーバー内の処理でエラーが発生した場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTPステータスコード（500）",
+                      "example": 500
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "ISO8601形式の日時文字列",
+                      "example": "2021-12-01T12:42:30.023Z"
+                    },
+                    "path": {
+                      "type": "string",
+                      "description": "リクエストパス",
+                      "example": "/api/parent-devices/super-parent-device-id"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "APIサーバーからの応答がない場合",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "エラーメッセージ",
+                      "example": "Service Unavailable"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "x-api-key": []
+          }
+        ]
+      }
+    }
+  }
+}

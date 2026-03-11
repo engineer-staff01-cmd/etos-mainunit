@@ -1,0 +1,31 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.db
+main
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# PlantUML image
+out/*
+syslog
+astinaserver ssh/id_ed25519.astinaserver
+astinaserver ssh/id_ed25519.astinaserver.ppk
+astinaserver ssh/id_ed25519.astinaserver.pub
+id_ed25519.astinaserver
+
+# output files
+etos-mainunit
+md5sum
+archive.zip
+archive
